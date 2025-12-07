@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Merry Christmas ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto:wght@300;400&display=swap" rel="stylesheet"/>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: radial-gradient(circle at top, #1d3b2f 0%, #082019 60%, #010a07 100%);
+      font-family: "Roboto", sans-serif;
+      color: #fef8e8;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 70px 0 5px;
+    }
+
+    header h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 2.4rem;
+      letter-spacing: 2px;
+      color: #f6e3a2;
+      text-shadow: 0 0 15px rgba(255, 215, 138, 0.6);
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #e9dbb8;
+      font-size: 1rem;
+    }
+
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        height: 520px;
+        margin-top: calc(50vh - 260px); /* 高度一半 - 一半 Carousel */
+        perspective: 1400px;
+        overflow: visible;
+    }
+
+    .carousel {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform 1s ease;
+    }
+
+    .polaroid {
+      width: 220px;
+      padding: 12px 12px 26px;
+      background: #ffffff;
+      border-radius: 6px;
+      box-shadow:
+        0 20px 35px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(0,0,0,0.15);
+      position: absolute;
+      left: calc(50% - 110px);
+      top: 60px;
+      transform-style: preserve-3d;
+      transition:
+        transform 0.5s ease,
+        box-shadow 0.5s ease;
+      cursor: pointer;
+    }
+
+    .polaroid img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .label {
+      margin-top: 8px;
+      text-align: center;
+      color: #444;
+      font-family: "Playfair Display", serif;
+      font-size: 0.95rem;
+    }
+
+    /* Lightbox (full screen image) */
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 6, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .lightbox-backdrop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .close-btn {
+      position: fixed;
+      top: 20px;
+      right: 25px;
+      font-size: 2.5rem;
+      color: #f5dba5;
+      cursor: pointer;
+      z-index: 30;
+    }
+
+    /* Snow */
+    .snow {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .flake {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      filter: blur(1px);
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      from { transform: translateY(-10px); }
+      to { transform: translateY(110vh); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="snow" id="snow"></div>
+
+<header>
+  <h1>Merry Christmas, My Love ❤️</h1>
+  <p>送給最重要的你，每一張都是我最珍惜的時刻。</p>
+</header>
+
+<div class="carousel-container">
+  <div id="carousel" class="carousel">
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox-backdrop">
+  <div class="close-btn" id="closeBtn">&times;</div>
+  <img id="lightboxImg" src="" />
+</div>
+<script>
+/* ========== 1. 你的九張照片與說明文字 ========== */
+const photos = [
+  { src: "photos/1.jpg", label: "第一次約會 💫" },
+  { src: "photos/2.jpg", label: "一起大笑的瞬間 😆" },
+  { src: "photos/3.jpg", label: "海邊的浪漫 🌊" },
+  { src: "photos/4.jpg", label: "你的笑容真的很治癒 ❤️" },
+  { src: "photos/5.jpg", label: "最可愛的樣子 ✨" },
+  { src: "photos/6.jpg", label: "一起走過的風景 📸" },
+  { src: "photos/7.jpg", label: "甜甜的靠在我肩上 💕" },
+  { src: "photos/8.jpg", label: "旅行的小瞬間 🚗" },
+  { src: "photos/9.jpg", label: "想和你一起度過每一年 🎄" },
+];
+
+/* ========== 2. 動態建立拍立得卡片 ========== */
+const carousel = document.getElementById("carousel");
+
+photos.forEach((p, i) => {
+  const card = document.createElement("div");
+  card.className = "polaroid";
+  card.innerHTML = `
+    <img src="${p.src}" alt="memory ${i+1}" />
+    <div class="label">${p.label}</div>
+  `;
+  carousel.appendChild(card);
+});
+
+/* ========== 3. Carousel 3D 排列 ========== */
+
+let angle = 0;
+const cards = document.querySelectorAll(".polaroid");
+const total = cards.length;
+const degStep = 360 / total;
+
+function updateCarousel() {
+  cards.forEach((card, i) => {
+    const currentAngle = degStep * i + angle;
+    const rad = currentAngle * Math.PI / 180;
+
+    const x = Math.sin(rad) * 380;   // 左右距離
+    const z = Math.cos(rad) * 380;   // 前後距離
+    const scale = z > 0 ? 1.2 : 0.8; // 中間放大、後面縮小
+    const blur = z < 0 ? 4 : 0;      // 後方模糊效果
+
+    card.style.transform = `
+      translateX(${x}px)
+      translateZ(${z}px)
+      rotateY(${currentAngle}deg)
+      scale(${scale})
+    `;
+
+    card.style.zIndex = Math.round(z);
+    card.style.filter = `blur(${blur}px)`;
+  });
+}
+
+updateCarousel();
+
+/* ========== 4. 左右切換功能 ========== */
+
+function next() {
+  angle -= degStep;
+  updateCarousel();
+}
+
+function prev() {
+  angle += degStep;
+  updateCarousel();
+}
+
+/* ========== 5. 點擊照片 → 進入 Lightbox ========== */
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+cards.forEach((card, idx) => {
+  card.addEventListener("click", () => {
+    lightboxImg.src = photos[idx].src;
+    lightbox.classList.add("visible");
+  });
+});
+
+/* ========== 6. 關閉 Lightbox ========== */
+
+document.getElementById("closeBtn").onclick = () => {
+  lightbox.classList.remove("visible");
+};
+
+/* 點擊背景也關閉 */
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove("visible");
+  }
+});
+/* ============================================
+   7. 支援「滑鼠拖曳 + 手機滑動」切換照片
+   ============================================ */
+
+let dragStartX = 0;
+let dragging = false;
+
+// === 滑鼠事件 ===
+carouselContainer = document.querySelector(".carousel-container");
+
+carouselContainer.addEventListener("mousedown", (e) => {
+  dragging = true;
+  dragStartX = e.clientX;
+});
+
+carouselContainer.addEventListener("mousemove", (e) => {
+  if (!dragging) return;
+  const diff = e.clientX - dragStartX;
+
+  if (Math.abs(diff) > 60) {
+    if (diff < 0) next();   // 滑向左 → 下一張
+    else prev();            // 滑向右 → 上一張
+    dragging = false; // 一次滑動只切換一次
+  }
+});
+
+carouselContainer.addEventListener("mouseup", () => {
+  dragging = false;
+});
+
+// 避免拖曳出邊界
+carouselContainer.addEventListener("mouseleave", () => {
+  dragging = false;
+});
+
+// === 手機觸控事件 ===
+carouselContainer.addEventListener("touchstart", (e) => {
+  dragStartX = e.touches[0].clientX;
+  dragging = true;
+});
+
+carouselContainer.addEventListener("touchmove", (e) => {
+  if (!dragging) return;
+  const diff = e.touches[0].clientX - dragStartX;
+
+  if (Math.abs(diff) > 60) {
+    if (diff < 0) next();
+    else prev();
+    dragging = false;
+  }
+});
+
+carouselContainer.addEventListener("touchend", () => {
+  dragging = false;
+});
+
+/* ============================================
+   8. 金色雪花效果（超唯美）
+   ============================================ */
+
+const snowLayer = document.getElementById("snow");
+const flakeCount = 80;
+
+for (let i = 0; i < flakeCount; i++) {
+  const flake = document.createElement("div");
+  flake.className = "flake";
+
+  const size = Math.random() * 4 + 3; // 3 ~ 7 px
+  const left = Math.random() * 100;   // 百分比
+  const duration = Math.random() * 12 + 10;
+  const delay = Math.random() * -20;
+
+  flake.style.width = size + "px";
+  flake.style.height = size + "px";
+  flake.style.left = left + "vw";
+  flake.style.animationDuration = duration + "s";
+  flake.style.animationDelay = delay + "s";
+
+  // 金色光彩
+  flake.style.background = `
+    radial-gradient(circle,
+      rgba(255,255,255,0.95) 0%,
+      rgba(255,230,150,0.9) 40%,
+      rgba(200,150,50,0.8) 100%
+    )
+  `;
+  flake.style.boxShadow = "0 0 8px rgba(255,220,150,0.8)";
+
+  snowLayer.appendChild(flake);
+}
+
+</script>
+</body>
+</html>
