@@ -8,8 +8,8 @@
     <!-- LINE 分享縮圖與預覽文字設定 (OG Tags) -->
     <meta property="og:title" content="Ray & Yun 要結婚了！誠摯邀請您參與我們的婚禮" />
     <meta property="og:description" content="誠摯邀請您參與我們人生中最特別的一天。期待當天見到你！" />
-    <!-- 部署到 GitHub 後，請將下方網址改為：https://你的帳號.github.io/專案名稱/Ray_Patty.png -->
-    <meta property="og:image" content="Ray_Patty.png" />
+    <!-- 部署到 GitHub 後，請將下方網址改為：https://你的帳號.github.io/專案名稱/Ray__Patty.png -->
+    <meta property="og:image" content="Ray__Patty.png" />
     <meta property="og:type" content="website" />
 
     <!-- Google Fonts 引入優雅字體 -->
@@ -101,6 +101,21 @@
             font-weight: 500;
         }
 
+        /* 交通資訊圖片區塊 */
+        .traffic-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px dashed #eae5db;
+            text-align: center;
+        }
+        .traffic-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
         /* 互動按鈕樣式 */
         .btn {
             display: inline-flex;
@@ -129,7 +144,7 @@
             color: #c5a880;
             border: 1px solid #c5a880;
             box-shadow: none;
-            margin-top: 5px;
+            margin-top: 15px;
         }
         .btn-map:active {
             background-color: #f9f6f0;
@@ -156,7 +171,7 @@
 
     <div class="container">
         
-        <!-- 主視覺插畫 (因為原圖自带白色外框紋理，直接放上去就很有質感) -->
+        <!-- 主視覺插畫 -->
         <section class="hero-section">
             <img src="Ray__Patty.png" alt="Ray & Yun Wedding" class="hero-image">
         </section>
@@ -174,27 +189,33 @@
             <div class="info-card">
                 <div class="info-item">
                     <div class="info-label">📅 婚禮日期 / DATE</div>
-                    <div class="info-value">2026 年 [ 請填月份 ] 月 [ 請填日期 ] 日 (星期[ ])</div>
+                    <div class="info-value">2027 年 10 月 31 日 (星期六)</div>
                 </div>
                 
                 <div class="info-item">
                     <div class="info-label">⏰ 入席時間 / TIME</div>
-                    <div class="info-value">[ 11:30 ] 入席 / [ 12:00 ] 準時開席</div>
+                    <div class="info-value">11:30 入席 / 12:00 準時開席</div>
                 </div>
                 
                 <div class="info-item">
                     <div class="info-label">📍 婚宴地點 / VENUE</div>
-                    <div class="info-value">[ 請填寫餐廳或飯店名稱 ]</div>
-                    <div class="info-value" style="font-size: 0.9rem; color: #888; margin-top: 4px;">[ 請填寫詳細廳別與地址 ]</div>
+                    <div class="info-value">台北國泰萬怡酒店</div>
+                    <div class="info-value" style="font-size: 0.9rem; color: #888; margin-top: 4px;">台北市中山區民生東路三段 6 號</div>
                 </div>
 
-                <!-- Google 地圖導航按鈕 (請替換下面的網址) -->
-                <a href="https://maps.google.com" target="_blank" class="btn btn-map">
-                    📍 開啟 Google 地圖導航
+                <!-- Google 地圖導航按鈕 (已設定為點擊直接開啟台北國泰萬怡酒店的路線規劃) -->
+                <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%8F%B0%E5%8C%97%E5%9C%8B%E6%B3%B0%E8%90%AC%E6%80%A1%E9%85%92%E5%BA%97" target="_blank" class="btn btn-map">
+                    🚗 開啟 Google 地圖導航
                 </a>
+
+                <!-- 交通資訊圖片區塊 -->
+                <div class="traffic-section">
+                    <div class="info-label">🚗 交通資訊 / TRANSPORTATION</div>
+                    <img src="traffic_info.png" alt="交通資訊" class="traffic-image">
+                </div>
             </div>
 
-            <!-- Google 表單跳轉按鈕 (請替換下面的網址) -->
+            <!-- Google 表單跳轉按鈕 (記得替換為你的 Google 表單網址) -->
             <a href="https://forms.google.com" target="_blank" class="btn">
                 ✍️ 點我填寫出席問卷
             </a>
