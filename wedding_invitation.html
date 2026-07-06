@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray & Yun 婚禮邀請函</title>
+
+    <!-- LINE 分享縮圖與預覽文字設定 (OG Tags) -->
+    <meta property="og:title" content="Ray & Yun 要結婚了！誠摯邀請您參與我們的婚禮" />
+    <meta property="og:description" content="誠摯邀請您參與我們人生中最特別的一天。期待當天見到你！" />
+    <!-- 部署到 GitHub 後，請將下方網址改為：https://你的帳號.github.io/專案名稱/Ray_Patty.png -->
+    <meta property="og:image" content="Ray_Patty.png" />
+    <meta property="og:type" content="website" />
+
+    <!-- Google Fonts 引入優雅字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+TC:wght@300;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* 基礎全域設定 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #fcfbfa;
+            color: #4a4a4a;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 撐滿手機畫面的主容器 */
+        .container {
+            max-width: 500px; /* 限制最大寬度，在電腦上看也會是漂亮的手機比例 */
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            min-height: 100vh;
+        }
+
+        /* 第一幕：主視覺插畫區 */
+        .hero-section {
+            width: 100%;
+            padding: 20px 20px 0 20px;
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* 第二幕：婚禮詳細資訊區 */
+        .info-section {
+            padding: 40px 30px;
+            text-align: center;
+            background: linear-gradient(to bottom, #ffffff, #f9f6f0);
+        }
+        .wedding-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: #c5a880;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .invitation-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 35px;
+            padding: 0 10px;
+        }
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid #eae5db;
+            border-radius: 12px;
+            padding: 25px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.08);
+        }
+        .info-item {
+            margin-bottom: 20px;
+        }
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        .info-label {
+            font-size: 0.85rem;
+            color: #c5a880;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .info-value {
+            font-size: 1.05rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* 互動按鈕樣式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #c5a880;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 0 4px 10px rgba(197, 168, 128, 0.3);
+            transition: all 0.3s ease;
+            width: 85%;
+            margin: 10px auto;
+        }
+        .btn:active {
+            transform: scale(0.98);
+            background-color: #b3966e;
+        }
+        .btn-map {
+            background-color: #ffffff;
+            color: #c5a880;
+            border: 1px solid #c5a880;
+            box-shadow: none;
+            margin-top: 5px;
+        }
+        .btn-map:active {
+            background-color: #f9f6f0;
+        }
+
+        /* 頁尾版權 */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.8rem;
+            color: #b0b0b0;
+            background-color: #f9f6f0;
+            font-family: 'Cinzel', serif;
+        }
+
+        /* 簡單的淡入動畫效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- 主視覺插畫 (因為原圖自带白色外框紋理，直接放上去就很有質感) -->
+        <section class="hero-section">
+            <img src="Ray__Patty.png" alt="Ray & Yun Wedding" class="hero-image">
+        </section>
+
+        <!-- 婚禮資訊與按鈕區 -->
+        <section class="info-section">
+            <div class="wedding-title">THE WEDDING INVITATION</div>
+            
+            <p class="invitation-text">
+                一路上謝謝有您的陪伴，見證我們相知相惜的過程。<br>
+                接下來最重要的一幕，誠摯邀請您來和我們一同共享喜悅、沾沾喜氣！❤️
+            </p>
+
+            <!-- 宴席資訊卡片 -->
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="info-label">📅 婚禮日期 / DATE</div>
+                    <div class="info-value">2026 年 [ 請填月份 ] 月 [ 請填日期 ] 日 (星期[ ])</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">⏰ 入席時間 / TIME</div>
+                    <div class="info-value">[ 11:30 ] 入席 / [ 12:00 ] 準時開席</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">📍 婚宴地點 / VENUE</div>
+                    <div class="info-value">[ 請填寫餐廳或飯店名稱 ]</div>
+                    <div class="info-value" style="font-size: 0.9rem; color: #888; margin-top: 4px;">[ 請填寫詳細廳別與地址 ]</div>
+                </div>
+
+                <!-- Google 地圖導航按鈕 (請替換下面的網址) -->
+                <a href="https://maps.google.com" target="_blank" class="btn btn-map">
+                    📍 開啟 Google 地圖導航
+                </a>
+            </div>
+
+            <!-- Google 表單跳轉按鈕 (請替換下面的網址) -->
+            <a href="https://forms.google.com" target="_blank" class="btn">
+                ✍️ 點我填寫出席問卷
+            </a>
+            
+        </section>
+
+        <!-- 頁尾 -->
+        <footer class="footer">
+            © 2026 Ray & Yun. All Rights Reserved.
+        </footer>
+
+    </div>
+
+</body>
+</html>
