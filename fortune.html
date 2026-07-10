@@ -125,49 +125,142 @@
             background-color: #333333;
         }
 
-        /* 籤筒動畫區塊 */
+        /* ═══ ✨ 高級求籤特效區塊（慢速優化版） ✨ ═══ */
         .lottery-box {
             display: none;
-            margin: 40px auto;
+            margin: 20px auto;
             position: relative;
-            width: 120px;
-            height: 160px;
+            width: 160px;
+            height: 220px;
+            perspective: 1000px; /* 開啟3D空間感 */
         }
-        .stick-container {
-            width: 80px;
-            height: 120px;
-            background: #222222;
-            border: 1px solid #aa8c55;
-            border-radius: 4px 4px 12px 12px;
+        
+        /* 籤筒本體容器 */
+        .cylinder-wrapper {
+            width: 90px;
+            height: 130px;
             position: absolute;
-            bottom: 0;
-            left: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-        .stick {
-            width: 6px;
-            height: 90px;
-            background: #aa8c55;
-            border-radius: 2px 2px 0 0;
-            position: absolute;
-            bottom: 30px;
+            bottom: 20px;
+            left: 35px;
             transform-origin: bottom center;
         }
-        .stick:nth-child(1) { left: 30px; transform: rotate(-8deg); }
-        .stick:nth-child(2) { left: 38px; transform: rotate(-2deg); }
-        .stick:nth-child(3) { left: 46px; transform: rotate(6deg); }
+        
+        /* 籤筒背板（讓籤看起來在筒子裡面） */
+        .box-back {
+            width: 100%;
+            height: 100%;
+            background: #151515;
+            border-radius: 6px 6px 16px 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            border: 1px solid #55442b;
+        }
+        
+        /* 籤筒面板（有燙金線條與奢華感） */
+        .box-front {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            border: 2px solid #aa8c55;
+            border-radius: 6px 6px 16px 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            box-shadow: inset 0 0 15px rgba(170,140,85,0.3), 0 10px 20px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 籤筒上的古典燙金小裝飾 */
+        .box-front::after {
+            content: '囍';
+            font-family: 'Noto Serif TC', serif;
+            color: #aa8c55;
+            font-size: 1.4rem;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
 
-        /* 細緻的搖晃動畫 */
-        @keyframes subtleShake {
+        /* 籤支通用樣式 */
+        .fortune-stick {
+            width: 6px;
+            height: 110px;
+            background: linear-gradient(to bottom, #d4af37 0%, #aa8c55 100%);
+            border-radius: 3px 3px 0 0;
+            position: absolute;
+            bottom: 40px;
+            z-index: 2; /* 夾在前後板中間 */
+            transform-origin: bottom center;
+            box-shadow: 1px 0 3px rgba(0,0,0,0.3);
+        }
+        /* 籤支頂部的紅色硃砂漆效果，更有氛圍 */
+        .fortune-stick::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: #932626;
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* 預設散落各角度的群籤 */
+        .st-1 { left: 15px; transform: rotate(-12deg); }
+        .st-2 { left: 30px; transform: rotate(-5deg); }
+        .st-3 { left: 42px; transform: rotate(2deg); }
+        .st-4 { left: 54px; transform: rotate(8deg); }
+        .st-5 { left: 68px; transform: rotate(15deg); }
+
+        /* 🔮 調整為節奏更穩重的籤筒搖晃動畫 */
+        @keyframes containerShake {
             0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-4px, 3px) rotate(-4deg); }
-            50% { transform: translate(4px, -3px) rotate(4deg); }
+            15% { transform: translate(-4px, 3px) rotate(-6deg); }
+            30% { transform: translate(4px, -2px) rotate(5deg); }
+            45% { transform: translate(-3px, -1px) rotate(-4deg); }
+            60% { transform: translate(3px, 2px) rotate(4deg); }
             75% { transform: translate(-2px, 1px) rotate(-2deg); }
+            90% { transform: translate(1px, -1px) rotate(1deg); }
             100% { transform: translate(0, 0) rotate(0deg); }
         }
-        .shaking {
-            animation: subtleShake 0.4s infinite ease-in-out;
+        .animate-shake {
+            animation: containerShake 0.5s infinite ease-in-out; /* 微調搖晃循環速度 */
         }
+
+        /* 🎋 搖晃時群籤亂序彈跳動效 */
+        @keyframes stickJumpingA {
+            0%, 100% { bottom: 40px; } 50% { bottom: 62px; transform: rotate(-13deg); }
+        }
+        @keyframes stickJumpingB {
+            0%, 100% { bottom: 40px; } 50% { bottom: 56px; transform: rotate(-4deg); }
+        }
+        @keyframes stickJumpingC {
+            0%, 100% { bottom: 40px; } 50% { bottom: 65px; transform: rotate(4deg); }
+        }
+        @keyframes stickJumpingD {
+            0%, 100% { bottom: 40px; } 50% { bottom: 60px; transform: rotate(11deg); }
+        }
+        
+        .animate-shake .st-1 { animation: stickJumpingA 0.35s infinite ease-in-out; }
+        .animate-shake .st-2 { animation: stickJumpingB 0.3s infinite ease-in-out 0.05s; }
+        .animate-shake .st-3 { animation: stickJumpingC 0.33s infinite ease-in-out 0.02s; }
+        .animate-shake .st-4 { animation: stickJumpingD 0.38s infinite ease-in-out 0.07s; }
+        .animate-shake .st-5 { animation: stickJumpingB 0.32s infinite ease-in-out 0.04s; }
+
+        /* 🎯 命定籤緩緩升起飛出動畫（放慢至 1.1 秒，優雅感倍增） */
+        @keyframes stickRiseUp {
+            0% { bottom: 40px; transform: scale(1) rotate(2deg); filter: brightness(1); }
+            60% { bottom: 130px; transform: scale(1.1) rotate(0deg); filter: brightness(1.2); box-shadow: 0 0 12px rgba(212,175,55,0.5); }
+            100% { bottom: 220px; transform: scale(1.25) translateY(-25px); opacity: 0; }
+        }
+        .stick-chosen {
+            z-index: 4 !important; /* 歷史性的一刻，超越籤筒最前端 */
+            animation: stickRiseUp 1.1s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+        /* ═════════════════════════════════ */
 
         /* 最終籤詩結果 */
         .result-overlay {
@@ -257,13 +350,21 @@
             <button class="btn" onclick="startLottery()">開啟祝福</button>
         </div>
 
-        <!-- 階段二：高級感求籤動畫 -->
+        <!-- 階段二：高級感求籤動畫區塊 (慢速沉浸版) -->
         <div id="animation-view" class="lottery-box">
-            <div class="stick-container" id="boxElement">
-                <div class="stick"></div>
-                <div class="stick"></div>
-                <div class="stick-container"></div>
-                <div class="stick"></div>
+            <div class="cylinder-wrapper" id="boxElement">
+                <!-- 後擋板 -->
+                <div class="box-back"></div>
+                
+                <!-- 夾在中間的五根互動籤支 -->
+                <div class="fortune-stick st-1"></div>
+                <div class="fortune-stick st-2"></div>
+                <div class="fortune-stick st-3" id="chosenStick"></div>
+                <div class="fortune-stick st-4"></div>
+                <div class="fortune-stick st-5"></div>
+                
+                <!-- 前面板 -->
+                <div class="box-front"></div>
             </div>
         </div>
 
@@ -293,8 +394,7 @@
             "【今日運勢】大吉\n桃花運與財運雙雙爆棚！今天在宴席上會遇到生命中的貴人（也可能是多吃了一塊超好吃的主廚特製肉）。請盡情享受這完美的一天！"
         ];
 
-        // 🎯 2. 隱藏版彩蛋對照表 (Key 是名字，Value 是專屬的話)
-        // ⚠️ 注意：名字必須與使用者輸入的字完全一樣（包含大小寫、空格）
+        // 🎯 2. 隱藏版彩蛋對照表
         const specialFortunes = {
             "王小明": "【專屬祝福】王小明，好兄弟！\n感謝你從大學一路相挺到現在。今天不用幫我省錢，高粱給他喝下去就對了！待會敬酒這桌要給我最大聲喔！",
             "陳大美": "【專屬祝福】大美寶貝！\n看到妳今天盛裝出席真的太感動了。下一個換妳辦婚禮，我一定到！記得等一下去新娘房找我拿專屬探房禮物卡喔～",
@@ -316,38 +416,41 @@
             animationView.style.display = 'block';
             
             const boxElement = document.getElementById('boxElement');
-            boxElement.classList.add('shaking');
+            const chosenStick = document.getElementById('chosenStick');
+            
+            // 步驟一：開始搖晃籤筒（延長到 2.2 秒）
+            boxElement.classList.add('animate-shake');
 
-            // 轉場時間 1.5 秒
+            // 步驟二：第 2.2 秒，停止搖晃，中央的籤緩緩升起（升起動畫需 1.1 秒）
             setTimeout(() => {
-                boxElement.classList.remove('shaking');
+                boxElement.classList.remove('animate-shake'); 
+                chosenStick.classList.add('stick-chosen');    
+            }, 2200);
+
+            // 步驟三：第 3.5 秒（搖晃2.2s + 升起1.1s + 稍微定格期待0.2s），優雅切換到結果畫面
+            setTimeout(() => {
+                chosenStick.classList.remove('stick-chosen'); 
                 animationView.style.display = 'none';
                 showResult(nameInput);
-            }, 1500);
+            }, 3500);
         }
 
         function showResult(username) {
             let selectedText = "";
-            let titleText = "大吉"; // 預設稱呼為大吉
+            let titleText = "大吉"; 
 
-            // 核心邏輯：判斷輸入的名字是否有在「特製名單」中
             if (specialFortunes.hasOwnProperty(username)) {
-                // 有符合的名字，直接抓特製內容
                 selectedText = specialFortunes[username];
-                titleText = "神籤"; // 可以替特定名字換個帥氣的標題，比如「神籤」或「彩蛋」
+                titleText = "神籤"; 
             } else {
-                // 沒有的話，從普卡庫裡面隨機抽一條
                 const randomIndex = Math.floor(Math.random() * fortunePool.length);
                 selectedText = fortunePool[randomIndex];
                 titleText = "大吉";
             }
 
-            // 將結果渲染至畫面
             document.getElementById('resultFortuneTitle').innerText = titleText;
             document.getElementById('resultName').innerText = `親愛的 ${username}：`;
             document.getElementById('resultText').innerText = selectedText;
-
-            // 顯示結果頁面
             document.getElementById('resultView').style.display = 'flex';
         }
 
