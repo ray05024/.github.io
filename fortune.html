@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray & Yun 婚禮專屬幸運籤</title>
+    
+    <!-- 引入極具質感的宋體（襯線體） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基礎全域重設 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #1a1a1a; /* 高級奢華深灰近黑背景 */
+            color: #333333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+
+        /* 主容器：限制最大寬度，完美適應所有手機螢幕 */
+        .card-container {
+            background-color: #fdfcf9; /* 溫潤的象牙白紙張感 */
+            border: 1px solid #d4af37; /* 細緻燙金線條 */
+            border-radius: 12px;
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 24px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            position: relative;
+            min-height: 480px; /* 給予基礎高度，但允許自動撐大 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* 歐式古典外框裝飾線 */
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 1px solid #eae1d4;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        /* 標題與副標 */
+        .wedding-brand {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: #aa8c55;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        h1 {
+            color: #222222;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #777777;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* 輸入區塊樣式 */
+        .input-group {
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 280px;
+            padding: 14px 20px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 1.05rem;
+            text-align: center;
+            outline: none;
+            font-family: 'Noto Serif TC', serif;
+            background-color: #ffffff;
+            color: #222222;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #aa8c55;
+            box-shadow: 0 0 10px rgba(170, 140, 85, 0.15);
+        }
+
+        /* 高級感感按鈕樣式 */
+        .btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #aa8c55;
+            padding: 14px 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Serif TC', serif;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            background-color: #333333;
+        }
+
+        /* 籤筒動畫區塊 */
+        .lottery-box {
+            display: none;
+            margin: 40px auto;
+            position: relative;
+            width: 120px;
+            height: 160px;
+        }
+        .stick-container {
+            width: 80px;
+            height: 120px;
+            background: #222222;
+            border: 1px solid #aa8c55;
+            border-radius: 4px 4px 12px 12px;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .stick {
+            width: 6px;
+            height: 90px;
+            background: #aa8c55;
+            border-radius: 2px 2px 0 0;
+            position: absolute;
+            bottom: 30px;
+            transform-origin: bottom center;
+        }
+        .stick:nth-child(1) { left: 30px; transform: rotate(-8deg); }
+        .stick:nth-child(2) { left: 38px; transform: rotate(-2deg); }
+        .stick:nth-child(3) { left: 46px; transform: rotate(6deg); }
+
+        /* 細緻的搖晃動畫 */
+        @keyframes subtleShake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-4px, 3px) rotate(-4deg); }
+            50% { transform: translate(4px, -3px) rotate(4deg); }
+            75% { transform: translate(-2px, 1px) rotate(-2deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking {
+            animation: subtleShake 0.4s infinite ease-in-out;
+        }
+
+        /* 最終籤詩結果（修正排版跑掉與切字問題） */
+        .result-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fdfcf9;
+            padding: 40px 24px;
+            border-radius: 12px;
+            /* 改用 flex 排版，並讓內容高度自然擴展 */
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow-y: auto; /* 若極端小螢幕仍可滾動，不切字 */
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 籤詩內文排版優化 */
+        .result-content {
+            width: 100%;
+            margin-bottom: 24px;
+        }
+        .fortune-title {
+            font-size: 2.2rem;
+            color: #932626; /* 優雅的暗朱紅 */
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .guest-name {
+            font-size: 1.15rem;
+            color: #222222;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: left;
+            border-bottom: 1px dashed #d1c7bd;
+            padding-bottom: 8px;
+            display: block;
+            width: 100%;
+        }
+        .fortune-text {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: #444444;
+            white-space: pre-line; /* 完美保留換行 */
+            text-align: left;
+            padding: 0 4px;
+            font-weight: 400;
+        }
+        
+        .btn-retry {
+            background-color: transparent;
+            color: #aa8c55;
+            border: 1px solid #aa8c55;
+            margin-top: 10px;
+        }
+        .bless-footer {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: #b5a48c;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-container">
+        
+        <!-- 階段一：名字輸入介面 -->
+        <div id="setup-view">
+            <div class="wedding-brand">RAY & YUN WEDDING</div>
+            <h1>婚禮專屬幸運籤</h1>
+            <p class="subtitle">輸入您的姓名<br>擷取今日專屬於您的命定祝福</p>
+            
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="請輸入姓名" maxlength="10">
+            </div>
+            
+            <button class="btn" onclick="startLottery()">開啟祝福</button>
+        </div>
+
+        <!-- 階段二：高級感求籤動畫 -->
+        <div id="animation-view" class="lottery-box">
+            <div class="stick-container" id="boxElement">
+                <div class="stick"></div>
+                <div class="stick"></div>
+                <div class="stick"></div>
+            </div>
+        </div>
+
+        <!-- 階段三：客製化大吉籤詩結果頁面 (完美修正字體切除問題) -->
+        <div id="resultView" class="result-overlay">
+            <div class="result-content">
+                <span class="fortune-title">大吉</span>
+                <span class="guest-name" id="resultName">致 賓客：</span>
+                <p class="fortune-text" id="resultText">籤詩載入中...</p>
+            </div>
+            
+            <div style="width: 100%;">
+                <button class="btn btn-retry" onclick="resetLottery()">再抽一次</button>
+                <div class="bless-footer">RAY & YUN 2027</div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // 🔮 100% 大吉客製化文案資料庫
+        const fortunePool = [
+            "【今日運勢】大吉\n今日不宜幫新郎擋酒，新娘會生氣。適宜多吃兩道大菜，並把桌上的飲料喝光。遇到隔壁單身賓客請主動微笑！",
+            "【今日運勢】大吉\n今天您在朋友圈的按讚數將會破紀錄！偷偷告訴你，今天靠近舞台的位置磁場最強，中獎機率直接飆升 200%！",
+            "【今日運勢】大吉\n恭喜你抽到籤王！今天只要吃飽喝足，接下來一整年都會發大財。待會新郎敬酒時，記得給他一個最熱情的歡呼！",
+            "【今日運勢】大吉\n今日福星高照！最適合做的事是找新郎新娘合照發限動。據說把今天的婚禮小物帶回家掛在鑰匙上，會幸運一整年！",
+            "【今日運勢】大吉\n桃花運與財運雙雙爆棚！今天在宴席上會遇到生命中的貴人（也可能是多吃了一塊超好iches肉）。請盡情享受這完美的一天！"
+        ];
+
+        function startLottery() {
+            const nameInput = document.getElementById('nameInput').value.trim();
+            
+            if (!nameInput) {
+                alert('請先輸入您的姓名，才能開啟祝福唷。');
+                return;
+            }
+
+            document.getElementById('setup-view').style.display = 'none';
+            const animationView = document.getElementById('animation-view');
+            animationView.style.display = 'block';
+            
+            const boxElement = document.getElementById('boxElement');
+            boxElement.classList.add('shaking');
+
+            // 優雅轉場：搖晃 1.5 秒
+            setTimeout(() => {
+                boxElement.classList.remove('shaking');
+                animationView.style.display = 'none';
+                showResult(nameInput);
+            }, 1500);
+        }
+
+        function showResult(username) {
+            const randomIndex = Math.floor(Math.random() * fortunePool.length);
+            const selectedText = fortunePool[randomIndex];
+
+            // 完美對齊名字與客製內文
+            document.getElementById('resultName').innerText = `親愛的 ${username}：`;
+            document.getElementById('resultText').innerText = selectedText;
+
+            // 秀出結果
+            document.getElementById('resultView').style.display = 'flex';
+        }
+
+        function resetLottery() {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('resultView').style.display = 'none';
+            document.getElementById('setup-view').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
