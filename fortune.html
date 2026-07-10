@@ -169,7 +169,7 @@
             animation: subtleShake 0.4s infinite ease-in-out;
         }
 
-        /* 最終籤詩結果（修正排版跑掉與切字問題） */
+        /* 最終籤詩結果 */
         .result-overlay {
             display: none;
             position: absolute;
@@ -180,11 +180,10 @@
             background-color: #fdfcf9;
             padding: 40px 24px;
             border-radius: 12px;
-            /* 改用 flex 排版，並讓內容高度自然擴展 */
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            overflow-y: auto; /* 若極端小螢幕仍可滾動，不切字 */
+            overflow-y: auto;
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes slideUp {
@@ -263,14 +262,15 @@
             <div class="stick-container" id="boxElement">
                 <div class="stick"></div>
                 <div class="stick"></div>
+                <div class="stick-container"></div>
                 <div class="stick"></div>
             </div>
         </div>
 
-        <!-- 階段三：客製化大吉籤詩結果頁面 (完美修正字體切除問題) -->
+        <!-- 階段三：客製化大吉籤詩結果頁面 -->
         <div id="resultView" class="result-overlay">
             <div class="result-content">
-                <span class="fortune-title">大吉</span>
+                <span class="fortune-title" id="resultFortuneTitle">大吉</span>
                 <span class="guest-name" id="resultName">致 賓客：</span>
                 <p class="fortune-text" id="resultText">籤詩載入中...</p>
             </div>
@@ -284,14 +284,24 @@
     </div>
 
     <script>
-        // 🔮 100% 大吉客製化文案資料庫
+        // 🔮 1. 普卡庫：一般賓客隨機抽取的 100% 大吉資料庫
         const fortunePool = [
             "【今日運勢】大吉\n今日不宜幫新郎擋酒，新娘會生氣。適宜多吃兩道大菜，並把桌上的飲料喝光。遇到隔壁單身賓客請主動微笑！",
             "【今日運勢】大吉\n今天您在朋友圈的按讚數將會破紀錄！偷偷告訴你，今天靠近舞台的位置磁場最強，中獎機率直接飆升 200%！",
             "【今日運勢】大吉\n恭喜你抽到籤王！今天只要吃飽喝足，接下來一整年都會發大財。待會新郎敬酒時，記得給他一個最熱情的歡呼！",
             "【今日運勢】大吉\n今日福星高照！最適合做的事是找新郎新娘合照發限動。據說把今天的婚禮小物帶回家掛在鑰匙上，會幸運一整年！",
-            "【今日運勢】大吉\n桃花運與財運雙雙爆棚！今天在宴席上會遇到生命中的貴人（也可能是多吃了一塊超好iches肉）。請盡情享受這完美的一天！"
+            "【今日運勢】大吉\n桃花運與財運雙雙爆棚！今天在宴席上會遇到生命中的貴人（也可能是多吃了一塊超好吃的主廚特製肉）。請盡情享受這完美的一天！"
         ];
+
+        // 🎯 2. 隱藏版彩蛋對照表 (Key 是名字，Value 是專屬的話)
+        // ⚠️ 注意：名字必須與使用者輸入的字完全一樣（包含大小寫、空格）
+        const specialFortunes = {
+            "王小明": "【專屬祝福】王小明，好兄弟！\n感謝你從大學一路相挺到現在。今天不用幫我省錢，高粱給他喝下去就對了！待會敬酒這桌要給我最大聲喔！",
+            "陳大美": "【專屬祝福】大美寶貝！\n看到妳今天盛裝出席真的太感動了。下一個換妳辦婚禮，我一定到！記得等一下去新娘房找我拿專屬探房禮物卡喔～",
+            "Nicky": "【專屬祝福】Intel MSR 大師 Nicky！\n今日運勢直接突破天際！你的代碼將永遠沒有 Bug。今天好高興你能來參加 Ray & Yun 的婚禮，今天什麼都別管，盡情吃個痛快！",
+            "林伴郎": "【專屬任務】大吉\n今天的紅包能不能順利送到新郎手上就看你了！今天的任務除了帥，還要負責幫新郎擋酒、遞衛生紙。你辛苦了，晚上留下來繼續喝！",
+            "蔡沄諪": "【專屬任務】你是真的胖"
+        };
 
         function startLottery() {
             const nameInput = document.getElementById('nameInput').value.trim();
@@ -308,7 +318,7 @@
             const boxElement = document.getElementById('boxElement');
             boxElement.classList.add('shaking');
 
-            // 優雅轉場：搖晃 1.5 秒
+            // 轉場時間 1.5 秒
             setTimeout(() => {
                 boxElement.classList.remove('shaking');
                 animationView.style.display = 'none';
@@ -317,14 +327,27 @@
         }
 
         function showResult(username) {
-            const randomIndex = Math.floor(Math.random() * fortunePool.length);
-            const selectedText = fortunePool[randomIndex];
+            let selectedText = "";
+            let titleText = "大吉"; // 預設稱呼為大吉
 
-            // 完美對齊名字與客製內文
+            // 核心邏輯：判斷輸入的名字是否有在「特製名單」中
+            if (specialFortunes.hasOwnProperty(username)) {
+                // 有符合的名字，直接抓特製內容
+                selectedText = specialFortunes[username];
+                titleText = "神籤"; // 可以替特定名字換個帥氣的標題，比如「神籤」或「彩蛋」
+            } else {
+                // 沒有的話，從普卡庫裡面隨機抽一條
+                const randomIndex = Math.floor(Math.random() * fortunePool.length);
+                selectedText = fortunePool[randomIndex];
+                titleText = "大吉";
+            }
+
+            // 將結果渲染至畫面
+            document.getElementById('resultFortuneTitle').innerText = titleText;
             document.getElementById('resultName').innerText = `親愛的 ${username}：`;
             document.getElementById('resultText').innerText = selectedText;
 
-            // 秀出結果
+            // 顯示結果頁面
             document.getElementById('resultView').style.display = 'flex';
         }
 
