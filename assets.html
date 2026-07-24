@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ray's Asset Dashboard</title>
+  <!-- 引入 Google 字型與 Chart.js 圖表庫 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-green: #34d399;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+      min-height: 100vh;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .total-amount {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .update-time {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    /* 圖表區塊 */
+    .chart-container {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 28px auto;
+    }
+
+    /* 資產清單區塊 */
+    .list-title {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-bank { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
+    .badge-crypto { background: rgba(192, 132, 252, 0.15); color: var(--accent-purple); }
+    .badge-default { background: rgba(255, 255, 255, 0.1); color: var(--text-sub); }
+
+    .item-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .item-amount {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* 進度條/占比條 */
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.8s ease-out;
+    }
+
+    /* Loading 骨架與動畫 */
+    #loading {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Ray's Assets</h1>
+      <div id="total-amount" class="total-amount">$ 0</div>
+      <div class="update-time">Real-time Live Dashboard</div>
+    </header>
+
+    <!-- 圓餅圖 -->
+    <div class="chart-container" id="chart-wrapper" style="display: none;">
+      <canvas id="assetChart"></canvas>
+    </div>
+
+    <!-- 清單內容 -->
+    <div class="list-title">Asset Allocation</div>
+    <div id="loading">✨ Loading latest asset data...</div>
+    <div id="data-container"></div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzxHvmRMOFq2QwdcnwNqjE6K9uA4TN7o0cgbkpwprlGP4iTUwHPbxP8EMlbG_kHrLZYxA/exec';
+
+    fetch(API_URL)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('chart-wrapper').style.display = 'block';
+
+        let html = '';
+        let total = 0;
+        let chartLabels = [];
+        let chartData = [];
+        let chartColors = [];
+
+        // 先計算總金額
+        const processedData = data.map(item => {
+          const category = item['Category'] || 'Other';
+          const name = item['Item Name'] || 'Unnamed';
+          const rawAmount = item['Amount'];
+          let amount = 0;
+          
+          if (typeof rawAmount === 'number') {
+            amount = rawAmount;
+          } else if (rawAmount) {
+            amount = parseFloat(String(rawAmount).replace(/[^0-9.-]+/g, "")) || 0;
+          }
+          
+          total += amount;
+          return { category, name, amount };
+        });
+
+        // 更新總金額文字
+        document.getElementById('total-amount').innerText = `NT$ ${total.toLocaleString()}`;
+
+        // 渲染列表與準備圖表數據
+        processedData.forEach((item) => {
+          const percentage = total > 0 ? ((item.amount / total) * 100).toFixed(1) : 0;
+          
+          let badgeClass = 'badge-default';
+          let color = '#94a3b8'; // 預設灰
+
+          if (item.category.toLowerCase() === 'bank') {
+            badgeClass = 'badge-bank';
+            color = '#38bdf8'; // 藍
+          } else if (item.category.toLowerCase() === 'crypto') {
+            badgeClass = 'badge-crypto';
+            color = '#c084fc'; // 紫
+          }
+
+          chartLabels.push(item.name);
+          chartData.push(item.amount);
+          chartColors.push(color);
+
+          html += `
+            <div class="item">
+              <div class="item-top">
+                <div class="item-left">
+                  <span class="badge ${badgeClass}">${item.category}</span>
+                  <span class="item-name">${item.name}</span>
+                </div>
+                <span class="item-amount">NT$ ${item.amount.toLocaleString()}</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${percentage}%; background-color: ${color};"></div>
+              </div>
+            </div>
+          `;
+        });
+
+        document.getElementById('data-container').innerHTML = html;
+
+        // 繪製 Chart.js 圓餅圖
+        const ctx = document.getElementById('assetChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: chartLabels,
+            datasets: [{
+              data: chartData,
+              backgroundColor: chartColors,
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            cutout: '75%',
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let val = context.raw || 0;
+                    return ` NT$ ${val.toLocaleString()}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        document.getElementById('loading').innerText = '❌ Failed to load data. Please check API status.';
+        console.error('Error:', error);
+      });
+  </script>
+
+</body>
+</html>
